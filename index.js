@@ -66,15 +66,19 @@ app.delete('/api/persons/:id', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
 	console.log('creating a new person entry...') // debug
-	if (!req.body.name)
+	const { name, number } = req.body
+	if (!name)
 		return res.status(400).json({error: 'name missing'})
-	else if (!req.body.number)
+	else if (!number)
 		return res.status(400).json({error: 'number missing'})
+	else if (phonebook.map(p => p.name).includes(name))
+		return res.status(400).json({error: 'name must be unique'})
+	
 
 	const person = {
 		id: Math.floor(Math.random()*1000000),
-		name: req.body.name,
-		number:req.body.number,
+		name: name,
+		number:number,
 	}
 	
 	phonebook = phonebook.concat(person)
