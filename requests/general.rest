@@ -10,3 +10,11 @@ GET http://localhost:3001/info
 ###
 
 DELETE http://localhost:3001/api/persons/5
+###
+POST http://localhost:3001/api/persons
+Content-TYpe: application/json
+
+{
+    "name": "Bob Smith",
+    "number": "123-456-7890"
+}

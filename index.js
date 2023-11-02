@@ -64,6 +64,22 @@ app.delete('/api/persons/:id', (req, res) => {
 	res.status(204).end()
 })
 
+app.post('/api/persons', (req, res) => {
+	console.log('creating a new person entry...') // debug
+	if (!req.body.name)
+		return res.status(400).json({error: 'name missing'})
+	else if (!req.body.number)
+		return res.status(400).json({error: 'number missing'})
+
+	const person = {
+		id: Math.floor(Math.random()*1000000),
+		name: req.body.name,
+		number:req.body.number,
+	}
+	
+	phonebook = phonebook.concat(person)
+	res.send(person)
+})
 
 const PORT = 3001
 app.listen(PORT, () => {
