@@ -1,8 +1,13 @@
 const express = require('express')
-
+const morgan = require('morgan')
 const app = express()
-app.use(express.json())
 
+const unknownEndpoint = (req, res) => {
+	res.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(express.json())
+app.use(morgan('tiny'))
 
 let phonebook = [
 	{ 
@@ -73,7 +78,6 @@ app.post('/api/persons', (req, res) => {
 		return res.status(400).json({error: 'number missing'})
 	else if (phonebook.map(p => p.name).includes(name))
 		return res.status(400).json({error: 'name must be unique'})
-	
 
 	const person = {
 		id: Math.floor(Math.random()*1000000),
@@ -84,6 +88,8 @@ app.post('/api/persons', (req, res) => {
 	phonebook = phonebook.concat(person)
 	res.send(person)
 })
+
+app.use(unknownEndpoint)
 
 const PORT = 3001
 app.listen(PORT, () => {
