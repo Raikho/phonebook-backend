@@ -6,8 +6,20 @@ const unknownEndpoint = (req, res) => {
 	res.status(404).send({ error: 'unknown endpoint' })
 }
 
+const morganMiddleware = morgan(function (tokens, req, res) {
+	const body = JSON.stringify(req.body)
+	return [
+		tokens.method(req, res),
+		tokens.url(req, res),
+		tokens.status(req, res),
+		tokens.res(req, res, 'content-length'), '-',
+		tokens['response-time'](req, res), 'ms',
+		body === '{}' ? null : body,
+	].join(' ')
+})
+
 app.use(express.json())
-app.use(morgan('tiny'))
+app.use(morganMiddleware)
 
 let phonebook = [
 	{ 
@@ -38,7 +50,6 @@ let phonebook = [
 ]
 
 app.get('/info', (req, res) => {
-	console.log('getting info...')
 	const numPeople = phonebook.length
 	const date = new Date().toString()
 
@@ -46,13 +57,11 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-	console.log('getting persons from phonebook...') // debug
   res.send(phonebook)
 })
 
 app.get('/api/persons/:id', (req, res) => {
 	const id = Number(req.params.id)
-	console.log(`getting person with id: ${id}...`) // debug
 	const person = phonebook.find(p => p.id === id)
 
 	if (person)
@@ -63,15 +72,14 @@ app.get('/api/persons/:id', (req, res) => {
 
 app.delete('/api/persons/:id', (req, res) => {
 	const id = Number(req.params.id)
-	console.log(`deleting person with id: ${id}`) // debug
 
 	phonebook = phonebook.filter(p => p.id !== id)
 	res.status(204).end()
 })
 
 app.post('/api/persons', (req, res) => {
-	console.log('creating a new person entry...') // debug
 	const { name, number } = req.body
+	// console.log('body: ', req.body) // debug
 	if (!name)
 		return res.status(400).json({error: 'name missing'})
 	else if (!number)
