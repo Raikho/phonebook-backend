@@ -4,7 +4,7 @@ const app = express()
 app.use(express.json())
 
 
-const phonebook = [
+let phonebook = [
 	{ 
 		"id": 1,
 		"name": "Arto Hellas", 
@@ -24,13 +24,13 @@ const phonebook = [
 		"id": 4,
 		"name": "Mary Poppendieck", 
 		"number": "39-23-6423122"
-	}
+	},
+	{ 
+		"id": 5,
+		"name": "Mary Poppendieck", 
+		"number": "39-23-6423122"
+	},
 ]
-
-app.get('/api/persons', (req, res) => {
-	console.log('getting persons from phonebook...')
-  res.send(phonebook)
-})
 
 app.get('/info', (req, res) => {
 	console.log('getting info...')
@@ -40,18 +40,32 @@ app.get('/info', (req, res) => {
 	res.send(`<div>Phonebook has info for ${numPeople} people</div><br /><div>${date}</div>`)
 })
 
+app.get('/api/persons', (req, res) => {
+	console.log('getting persons from phonebook...') // debug
+  res.send(phonebook)
+})
+
 app.get('/api/persons/:id', (req, res) => {
 	const id = Number(req.params.id)
-	console.log(`getting person with id: ${id}...`)
-	const person = phonebook.find(person => person.id === id)
+	console.log(`getting person with id: ${id}...`) // debug
+	const person = phonebook.find(p => p.id === id)
+
 	if (person)
 		res.send(person)
 	else
 		res.status(404).end()
 })
 
+app.delete('/api/persons/:id', (req, res) => {
+	const id = Number(req.params.id)
+	console.log(`deleting person with id: ${id}`) // debug
+
+	phonebook = phonebook.filter(p => p.id !== id)
+	res.status(204).end()
+})
+
 
 const PORT = 3001
 app.listen(PORT, () => {
-   console.log('Server running on port 3001...')
+   console.log('Server running on port 3001...') // debug
 })
