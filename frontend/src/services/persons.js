@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/api/persons'
+const baseUrl = 'https://lingering-darkness-2848.fly.dev/api/persons'
 
 const getAll = () => {
     const req = axios.get(baseUrl)
