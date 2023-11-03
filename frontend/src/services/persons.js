@@ -1,5 +1,4 @@
 import axios from 'axios'
-// const baseUrl = 'https://lingering-darkness-2848.fly.dev/api/persons'
 const baseUrl = '/api/persons'
 
 const getAll = () => {

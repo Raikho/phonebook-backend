@@ -104,5 +104,5 @@ app.use(unknownEndpoint)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
-   console.log('Server running on port 3001...') // debug
+   console.log(`Server running on port ${PORT}...`) // debug
 })
