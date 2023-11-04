@@ -33,40 +33,15 @@ app.use(express.static('dist'))
 app.use(express.json())
 app.use(morganMiddleware)
 
-let phonebook = [
-	{ 
-		"id": 1,
-		"name": "Arto Hellas", 
-		"number": "040-123456"
-	},
-	{ 
-		"id": 2,
-		"name": "Ada Lovelace", 
-		"number": "39-44-5323523"
-	},
-	{ 
-		"id": 3,
-		"name": "Dan Abramov", 
-		"number": "12-43-234345"
-	},
-	{ 
-		"id": 4,
-		"name": "Mary Poppendieck", 
-		"number": "39-23-6423122"
-	},
-	{ 
-		"id": 5,
-		"name": "Mary Poppendieck", 
-		"number": "39-23-6423122"
-	},
-]
-
-app.get('/info', (req, res) => {
-	// TODO
-	const numPeople = phonebook.length
-	const date = new Date().toString()
-
-	res.send(`<div>Phonebook has info for ${numPeople} people</div><br /><div>${date}</div>`)
+app.get('/info', (req, res, next) => {
+	Person
+		.find({})
+		.then(persons => {
+			const numPeople = persons.length
+			const date = new Date().toString()
+			res.send(`<div>Phonebook has info for ${numPeople} people</div><br /><div>${date}</div>`)
+		})
+		.catch(err => next(err))
 })
 
 app.get('/api/persons', (req, res, next) => {
@@ -116,7 +91,7 @@ app.put('/api/persons/:id', (req, res, next) => {
 		name: body.name,
 		number: body.number,
 	}
-	
+
 	Person
 		.findByIdAndUpdate(req.params.id, person, { new: true })
 		.then(updatedPerson => res.json(updatedPerson))
