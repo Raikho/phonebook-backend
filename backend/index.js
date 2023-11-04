@@ -26,6 +26,8 @@ const errorHandler = (err, req, res, next) => {
 	console.error(err.message)
 	if (err.name === 'CastError')
 		return res.status(400).send({ error: 'malformatted id' })
+	else if (err.name === 'ValidationError')
+		return res.status(400).json({ error: err.message })
 	next(err)
 }
 app.use(cors())
@@ -70,15 +72,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
 
 app.post('/api/persons', async (req, res, next) => {
 	const { name, number } = req.body
-	if (!name)
-		return res.status(400).json({error: 'name missing'})
-	else if (!number)
-		return res.status(400).json({error: 'number missing'})
-
-	const person = new Person({
-		name: name,
-		number:number,
-	})
+	const person = new Person({ name, number })
 	person
 		.save()
 		.then(savedPerson => res.json(savedPerson))
@@ -86,14 +80,13 @@ app.post('/api/persons', async (req, res, next) => {
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
-	const body = req.body
-	const person = {
-		name: body.name,
-		number: body.number,
-	}
-
+	const { name, number } = req.body
 	Person
-		.findByIdAndUpdate(req.params.id, person, { new: true })
+		.findByIdAndUpdate(
+			req.params.id, 
+			{ name, number }, 
+			{ new: true, runValidators: true, context: 'query' }
+		)
 		.then(updatedPerson => res.json(updatedPerson))
 		.catch(err => next(err))	
 })

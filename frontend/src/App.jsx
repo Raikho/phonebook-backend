@@ -63,8 +63,10 @@ const App = () => {
         clearInputs();
       })
       .catch(err => {
-        console.log(err) // debug
-        addTempNotice('error', `${newName} was not able to be added to the server`)
+        const message = err.response.data.error
+        console.log(message) // debug
+        // addTempNotice('error', `${newName} was not able to be added to the server`)
+        addTempNotice('error', message)
       })
   }
 
@@ -80,8 +82,10 @@ const App = () => {
         clearInputs();
       })
       .catch(err => {
-        console.log(err) // debug
-        addTempNotice('error', `Information of ${newName} was not found in the server`)
+        // TODO
+        const message = err.response.data.error
+        console.log(message) // debug
+        addTempNotice('error', message)
       })
   }
 
