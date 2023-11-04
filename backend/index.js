@@ -68,6 +68,7 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
+	// TODO: mongodb
 	const id = Number(req.params.id)
 	const person = phonebook.find(p => p.id === id)
 
@@ -78,30 +79,31 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 app.delete('/api/persons/:id', (req, res) => {
+	// TODO: mongodb
 	const id = Number(req.params.id)
 
 	phonebook = phonebook.filter(p => p.id !== id)
 	res.status(204).end()
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', async (req, res) => {
 	const { name, number } = req.body
-	// console.log('body: ', req.body) // debug
 	if (!name)
 		return res.status(400).json({error: 'name missing'})
 	else if (!number)
 		return res.status(400).json({error: 'number missing'})
-	else if (phonebook.map(p => p.name).includes(name))
-		return res.status(400).json({error: 'name must be unique'})
+	// await Person
+	// 	.find({name: name})
+	// 	.then(person => res.status(400).json({error: `${person} already in database`}))
 
-	const person = {
-		id: Math.floor(Math.random()*1000000),
+	const person = new Person({
 		name: name,
 		number:number,
-	}
-	
-	phonebook = phonebook.concat(person)
-	res.send(person)
+	})
+
+	person
+		.save()
+		.then(savedNote => res.send(savedNote))
 })
 
 app.use(unknownEndpoint)
