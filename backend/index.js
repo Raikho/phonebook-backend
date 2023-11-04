@@ -21,6 +21,13 @@ const morganMiddleware = morgan(function (tokens, req, res) {
 		body === '{}' ? null : body,
 	].join(' ')
 })
+
+const errorHandler = (err, req, res, next) => {
+	console.error(err.message)
+	if (err.name === 'CastError')
+		return res.status(400).send({ error: 'malformatted id' })
+	next(err)
+}
 app.use(cors())
 app.use(express.static('dist'))
 app.use(express.json())
@@ -55,35 +62,35 @@ let phonebook = [
 ]
 
 app.get('/info', (req, res) => {
+	// TODO
 	const numPeople = phonebook.length
 	const date = new Date().toString()
 
 	res.send(`<div>Phonebook has info for ${numPeople} people</div><br /><div>${date}</div>`)
 })
 
-app.get('/api/persons', (req, res) => {
+app.get('/api/persons', (req, res, next) => {
 	Person
 		.find({})
 		.then(persons => res.send(persons))
+		// .catch(err => next(err))
 })
 
-app.get('/api/persons/:id', (req, res) => {
-	// TODO: mongodb
-	const id = Number(req.params.id)
-	const person = phonebook.find(p => p.id === id)
-
-	if (person)
-		res.send(person)
-	else
-		res.status(404).end()
+app.get('/api/persons/:id', (req, res, next) => {
+	Person
+		.findById(req.params.id)
+		.then(person => {
+			if (person) res.json(person)
+			else res.status(404).end()
+		})
+		.catch(err => next(err))
 })
 
-app.delete('/api/persons/:id', (req, res) => {
-	// TODO: mongodb
-	const id = Number(req.params.id)
-
-	phonebook = phonebook.filter(p => p.id !== id)
-	res.status(204).end()
+app.delete('/api/persons/:id', (req, res, next) => {
+	Person
+		.findByIdAndDelete(req.params.id)
+		.then(result => res.status(204).end())
+		.catch(err => next(err))
 })
 
 app.post('/api/persons', async (req, res) => {
@@ -92,21 +99,18 @@ app.post('/api/persons', async (req, res) => {
 		return res.status(400).json({error: 'name missing'})
 	else if (!number)
 		return res.status(400).json({error: 'number missing'})
-	// await Person
-	// 	.find({name: name})
-	// 	.then(person => res.status(400).json({error: `${person} already in database`}))
 
 	const person = new Person({
 		name: name,
 		number:number,
 	})
-
 	person
 		.save()
 		.then(savedNote => res.send(savedNote))
 })
 
 app.use(unknownEndpoint)
+app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
