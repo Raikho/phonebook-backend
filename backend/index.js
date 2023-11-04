@@ -73,7 +73,7 @@ app.get('/api/persons', (req, res, next) => {
 	Person
 		.find({})
 		.then(persons => res.send(persons))
-		// .catch(err => next(err))
+		.catch(err => next(err))
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -93,7 +93,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
 		.catch(err => next(err))
 })
 
-app.post('/api/persons', async (req, res) => {
+app.post('/api/persons', async (req, res, next) => {
 	const { name, number } = req.body
 	if (!name)
 		return res.status(400).json({error: 'name missing'})
@@ -107,6 +107,7 @@ app.post('/api/persons', async (req, res) => {
 	person
 		.save()
 		.then(savedNote => res.send(savedNote))
+		.catch(err => next(err))
 })
 
 app.use(unknownEndpoint)
@@ -114,5 +115,5 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-   console.log(`Server running on port ${PORT}...`) // debug
+   console.log(`Server running on port ${PORT}...`)
 })
