@@ -15,30 +15,15 @@ POST https://lingering-darkness-2848.fly.dev/api/persons
 Content-TYpe: application/json
 
 {
-    "name": "Bob Smith",
+    "name": "Bob Smith2",
     "number": "123-456-7890"
 }
-
-###
 ###
 
-GET https://lingering-darkness-2848.fly.dev/api/persons
-###
-
-GET https://lingering-darkness-2848.fly.dev/api/persons/4
-###
-GET https://lingering-darkness-2848.fly.dev/api/persons/10
-###
-
-GET https://lingering-darkness-2848.fly.dev/info
-###
-
-DELETE https://lingering-darkness-2848.fly.dev/api/persons/5
-###
-POST https://lingering-darkness-2848.fly.dev/api/persons
+PUT https://lingering-darkness-2848.fly.dev/api/persons/6545e741fdebf2046d4c8dd4
 Content-TYpe: application/json
 
 {
-    "name": "Bob Smith",
-    "number": "123-456-7890"
+    "name": "Bob Smith2",
+    "number": "123-456-0000"
 }

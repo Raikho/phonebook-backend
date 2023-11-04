@@ -106,8 +106,21 @@ app.post('/api/persons', async (req, res, next) => {
 	})
 	person
 		.save()
-		.then(savedNote => res.send(savedNote))
+		.then(savedPerson => res.json(savedPerson))
 		.catch(err => next(err))
+})
+
+app.put('/api/persons/:id', (req, res, next) => {
+	const body = req.body
+	const person = {
+		name: body.name,
+		number: body.number,
+	}
+	
+	Person
+		.findByIdAndUpdate(req.params.id, person, { new: true })
+		.then(updatedPerson => res.json(updatedPerson))
+		.catch(err => next(err))	
 })
 
 app.use(unknownEndpoint)
