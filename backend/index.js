@@ -66,7 +66,7 @@ app.get('/api/persons/:id', (req, res, next) => {
 app.delete('/api/persons/:id', (req, res, next) => {
 	Person
 		.findByIdAndDelete(req.params.id)
-		.then(result => res.status(204).end())
+		.then(() => res.status(204).end())
 		.catch(err => next(err))
 })
 
@@ -83,12 +83,12 @@ app.put('/api/persons/:id', (req, res, next) => {
 	const { name, number } = req.body
 	Person
 		.findByIdAndUpdate(
-			req.params.id, 
-			{ name, number }, 
+			req.params.id,
+			{ name, number },
 			{ new: true, runValidators: true, context: 'query' }
 		)
 		.then(updatedPerson => res.json(updatedPerson))
-		.catch(err => next(err))	
+		.catch(err => next(err))
 })
 
 app.use(unknownEndpoint)
@@ -96,5 +96,5 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-   console.log(`Server running on port ${PORT}...`)
+	console.log(`Server running on port ${PORT}...`)
 })
